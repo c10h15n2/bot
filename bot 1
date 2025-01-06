@@ -1,0 +1,92 @@
+import discord
+from discord.ext import commands
+import random
+
+# Configurar los intents para que el bot pueda leer mensajes
+intents = discord.Intents.default()
+intents.message_content = True
+
+# Crear el bot usando commands.Bot
+bot = commands.Bot(command_prefix="!", intents=intents)
+
+# Evento que se ejecuta cuando el bot está listo
+@bot.event
+async def on_ready():
+    print(f'Hemos iniciado sesión como {bot.user}')
+
+# Comando para responder "Hi!" cuando alguien escribe "hello"
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return  # Ignorar los mensajes enviados por el bot
+
+    if message.content.lower().startswith('hello'):
+        await message.channel.send("Hi!")
+    elif message.content.lower().startswith('bye'):
+        await message.channel.send("bye, see you soon!")
+    else:
+        await message.channel.send(message.content)
+@bot.command()
+async def roll(ctx, dice: str):
+    """Rolls a dice in NdN format."""
+    try:
+        rolls, limit = map(int, dice.split('d'))
+    except Exception:
+        await ctx.send('Format has to be in NdN!')
+        return
+
+    result = ', '.join(str(random.randint(1, limit)) for r in range(rolls))
+    await ctx.send(result)
+@bot.command()
+async def flip_coin(ctx):
+    flip = random.randint(0, 2)
+    if flip == 0:
+        return "HEADS"
+    else:
+        return "TAILS"
+@bot.command()
+async def gen_pass(ctx, pass_length: int):
+    elements = "+-/*!&$#?=@<>"
+    password = ""
+
+    for i in range(pass_length):
+        password += random.choice(elements)
+
+    return password
+@bot.command()
+async def gen_emoji(ctx):
+    emoji = ["\U0001f600", "\U0001f642", "\U0001F606", "\U0001F923"]
+    return random.choice(emoji)
+
+
+bot.run(")
+async def bye(ctx):
+    await ctx.send("Bye, see you soon!")
+
+# Command: Generate password
+@bot.command()
+async def genpass(ctx, length: int = 12):
+    """Generate a secure password. Default length: 12 characters."""
+    # Limit the password length between 8 and 32
+    length = max(8, min(length, 32))
+    characters = (
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz"
+        "0123456789"
+        "!@#$%^&*()-_=+"
+    )
+    password = ''.join(random.choice(characters) for _ in range(length))
+    await ctx.send(f"🔒 Your password: `{password}`")
+
+# Command: Random emoji
+@bot.command()
+async def emoji(ctx):
+    emojis = ["😀", "🙂", "😆", "🤣"]
+    await ctx.send(random.choice(emojis))
+
+# Command: Flip a coin
+@bot.command()
+async def flip(ctx):
+    result = random.choice(["HEADS", "TAILS"])
+    await ctx.send(f"The coin landed on: {result}")
+bot.run("MTMyNDEyMTg5MDM1MjAwOTMyOA.Gir8iu.lRScGpBnuZfLvE4395GUShLptmLhWWVX_Wu5nw")
